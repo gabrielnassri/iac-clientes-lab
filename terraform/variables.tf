@@ -1,4 +1,4 @@
-variable "project_id" {}
+variable "project_id" { COPIA TU ID DE PROYECTO }
 variable "region" {
   default = "us-central1"
 }
