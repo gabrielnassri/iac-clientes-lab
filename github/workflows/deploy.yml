@@ -1,0 +1,25 @@
+name: Terraform Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+        project_id: streaming-asteroides
+
+    - name: Terraform Init and Apply
+      run: |
+        cd terraform
+        terraform init
+        terraform apply -auto-approve
