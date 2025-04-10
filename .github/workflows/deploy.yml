@@ -1,4 +1,4 @@
-name: Terraform Deploy
+name: Despliegue completo del código
 
 on:
   push:
@@ -6,20 +6,46 @@ on:
       - master
 
 jobs:
-  terraform:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
 
-    - name: Set up Cloud SDK
+    - name: Autenticación en GCP
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+    - name: Setup gcloud
       uses: google-github-actions/setup-gcloud@v1
       with:
-        service_account_key: ${{ secrets.GCP_SA_KEY }}
-        project_id: streaming-asteroides
+        project_id: pruebaiac-456313
 
-    - name: Terraform Init and Apply
+    - name: Build and Push Docker Image to GCR
       run: |
-        cd terraform
-        terraform init
-        terraform apply -auto-approve
+        docker build -t gcr.io/pruebaiac-456313/clientes-api ./java-service
+        gcloud auth configure-docker --quiet
+        docker push gcr.io/pruebaiac-456313/clientes-api
+
+    - name: Deploy to Cloud Run
+      run: |
+        gcloud run deploy clientes-api \
+          --image=gcr.io/${{ env.GOOGLE_CLOUD_PROJECT }}/clientes-api:latest \
+          --platform=managed \
+          --region=us-central1 \
+          --allow-unauthenticated \
+          --set-env-vars=DB_HOST=34.72.123.45,DB_USER=admin,DB_PASSWORD=admin1234
+
+    - name: Ejecutar script SQL init.sql
+      run: |
+        gcloud sql connect clientes-db --user=admin --quiet < sql/init.sql
+
+    - name: Copiar index.html a la VM
+      run: |
+        echo "$SSH_PRIVATE_KEY" > key.pem
+        chmod 600 key.pem
+        scp -o StrictHostKeyChecking=no -i key.pem web/index.html debian@<IP_VM>:/tmp/index.html
+        ssh -o StrictHostKeyChecking=no -i key.pem debian@<IP_VM> "sudo mv /tmp/index.html /var/www/html/index.html"
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
