@@ -9,7 +9,7 @@ import com.google.gson.Gson;
 public class App {
 
     public static void main(String[] args) {
-        port(8080);
+        port(Integer.parseInt(System.getenv().getOrDefault("PORT", "8080")));
 
         get("/clientes", (req, res) -> {
             List<Map<String, Object>> clientes = new ArrayList<>();
