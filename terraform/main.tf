@@ -20,7 +20,8 @@ resource "google_vpc_access_connector" "vpc_connector" {
   region        = var.region
   network       = google_compute_network.vpc_network.name
   ip_cidr_range = "10.8.0.0/28"
-  max_throughput = 200
+  max_throughput = 300
+  min_throughput = 200
 }
 
 resource "google_compute_global_address" "private_ip_alloc" {
