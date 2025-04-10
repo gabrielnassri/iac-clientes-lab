@@ -1,11 +1,12 @@
-resource "google_cloud_run_service" "java-api" {
+resource "google_cloud_run_service" "java_api" {
   name     = "clientes-api"
   location = var.region
 
   template {
     spec {
       containers {
-        image = "gcr.io/cloudrun/hello"
+        image = "gcr.io/${var.project_id}/clientes-api:latest"
+
         env {
           name  = "DB_HOST"
           value = google_sql_database_instance.default.connection_name
@@ -18,11 +19,22 @@ resource "google_cloud_run_service" "java-api" {
           name  = "DB_PASSWORD"
           value = var.db_password
         }
+
+        ports {
+          container_port = 8080
+        }
+      }
+
+      container_concurrency = 80
+
+      vpc_access {
+        connector = google_vpc_access_connector.vpc_connector.name
+        egress    = "ALL_TRAFFIC"
       }
     }
   }
 
-  traffic {
+  traffics {
     percent         = 100
     latest_revision = true
   }

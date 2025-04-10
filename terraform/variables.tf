@@ -1,6 +1,4 @@
-variable "project_id" { 
-  default = "TU_ID_DE_PROYECTO"
-}
+variable "project_id" {}
 variable "region" {
   default = "us-central1"
 }
