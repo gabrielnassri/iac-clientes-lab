@@ -14,7 +14,7 @@ resource "google_cloud_run_service" "java_api" {
 
     spec {
       containers {
-        image = "gcr.io/${var.project_id}/clientes-api:latest"
+        image = "gcr.io/cloudrun/hello"
 
         env {
           name  = "DB_HOST"
