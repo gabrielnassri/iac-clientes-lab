@@ -33,12 +33,3 @@ resource "google_service_account_key" "github_key" {
     last_updated = timestamp()
   }
 }
-
-output "github_sa_key_json" {
-  value     = google_service_account_key.github_key.private_key
-  sensitive = true
-}
-
-output "github_sa_email" {
-  value = google_service_account.github_actions.email
-}
