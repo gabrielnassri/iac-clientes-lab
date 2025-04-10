@@ -24,18 +24,24 @@ jobs:
 
     - name: Build and Push Docker Image to GCR
       run: |
-        docker build -t gcr.io/pruebaiac-456313/clientes-api ./java-service
+        docker build -t gcr.io/${{ env.GOOGLE_CLOUD_PROJECT }}/clientes-api ./java-service
         gcloud auth configure-docker --quiet
-        docker push gcr.io/pruebaiac-456313/clientes-api
+        docker push gcr.io/${{ env.GOOGLE_CLOUD_PROJECT }}/clientes-api
+
+    - name: Read Terraform Outputs
+      id: tf_outputs
+      run: |
+        DB_HOST=$(terraform -chdir=terraform output -raw sql_instance_connection_name)
+        echo "db_host=$DB_HOST" >> $GITHUB_OUTPUT
 
     - name: Deploy to Cloud Run
       run: |
         gcloud run deploy clientes-api \
-          --image=gcr.io/${{ env.GOOGLE_CLOUD_PROJECT }}/clientes-api:latest \
+          --image=gcr.io/${{ env.GOOGLE_CLOUD_PROJECT }}/clientes-api \
           --platform=managed \
           --region=us-central1 \
           --allow-unauthenticated \
-          --set-env-vars=DB_HOST=34.72.123.45,DB_USER=admin,DB_PASSWORD=admin1234
+          --set-env-vars=DB_HOST=${{ steps.tf_outputs.outputs.db_host }},DB_USER=admin,DB_PASSWORD=admin1234
 
     - name: Ejecutar script SQL init.sql
       run: |
