@@ -27,9 +27,12 @@ resource "google_cloud_run_service" "java_api" {
 
       container_concurrency = 80
 
-      vpc_access {
-        connector = google_vpc_access_connector.vpc_connector.name
-        egress    = "ALL_TRAFFIC"
+      vpc_access_egress = "ALL_TRAFFIC"
+      vpc_connector     = google_vpc_access_connector.vpc_connector.id
+
+      traffic {
+        percent         = 100
+        latest_revision = true
       }
     }
   }

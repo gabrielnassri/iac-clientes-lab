@@ -4,21 +4,25 @@ resource "google_service_account" "github_actions" {
 }
 
 resource "google_project_iam_member" "run_admin" {
+  project = var.project_id
   role   = "roles/run.admin"
   member = "serviceAccount:${google_service_account.github_actions.email}"
 }
 
 resource "google_project_iam_member" "iam_admin" {
+  project = var.project_id
   role   = "roles/iam.securityAdmin"
   member = "serviceAccount:${google_service_account.github_actions.email}"
 }
 
 resource "google_project_iam_member" "storage_admin" {
+  project = var.project_id
   role   = "roles/storage.admin"
   member = "serviceAccount:${google_service_account.github_actions.email}"
 }
 
 resource "google_project_iam_member" "run_invoker" {
+  project = var.project_id
   role   = "roles/run.invoker"
   member = "serviceAccount:${google_service_account.github_actions.email}"
 }
