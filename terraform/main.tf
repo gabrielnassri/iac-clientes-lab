@@ -16,9 +16,10 @@ resource "google_compute_subnetwork" "vpc_subnet" {
 }
 
 resource "google_vpc_access_connector" "vpc_connector" {
-  name   = "iac-vpc-connector"
-  region = var.region
-  network = google_compute_network.vpc_network.name
-
+  name          = "iac-vpc-connector"
+  region        = var.region
+  network       = google_compute_network.vpc_network.name
   ip_cidr_range = "10.8.0.0/28"
+  max_throughput = 300  # Mbps
 }
+
