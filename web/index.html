@@ -9,7 +9,7 @@
   <div id="data">Cargando datos...</div>
 
   <script>
-    fetch("https://clientes-api-754844828662.us-central1.run.app/clientes")
+    fetch("https://${google_cloud_run_service.java_api.status[0].url}")
       .then(response => response.json())
       .then(clientes => {
         let html = '<table border="1"><tr><th>Nombre</th><th>Correo</th></tr>';
