@@ -24,21 +24,10 @@ resource "google_cloud_run_service" "java_api" {
         ports {
           container_port = 8080
         }
-
-        resources {
-          limits = {
-            memory = "512Mi"
-            cpu    = "1"
-          }
-        }
       }
 
-      container_concurrency = 80
-
-      vpc_access {
-        connector = google_vpc_access_connector.vpc_connector.id
-        egress    = "ALL_TRAFFIC"
-      }
+      vpc_connector = google_vpc_access_connector.vpc_connector.id
+      vpc_connector_egress_settings = "ALL_TRAFFIC"
     }
   }
 
