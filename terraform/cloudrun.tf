@@ -1,6 +1,7 @@
 resource "google_cloud_run_service" "java_api" {
   name     = "clientes-api"
   location = var.region
+  project  = var.project_id
 
   template {
     spec {
@@ -23,21 +24,25 @@ resource "google_cloud_run_service" "java_api" {
         ports {
           container_port = 8080
         }
+
+        resources {
+          limits = {
+            memory = "512Mi"
+            cpu    = "1"
+          }
+        }
       }
 
       container_concurrency = 80
 
-      vpc_access_egress = "ALL_TRAFFIC"
-      vpc_connector     = google_vpc_access_connector.vpc_connector.id
-
-      traffic {
-        percent         = 100
-        latest_revision = true
+      vpc_access {
+        connector = google_vpc_access_connector.vpc_connector.id
+        egress    = "ALL_TRAFFIC"
       }
     }
   }
 
-  traffics {
+  traffic {
     percent         = 100
     latest_revision = true
   }
