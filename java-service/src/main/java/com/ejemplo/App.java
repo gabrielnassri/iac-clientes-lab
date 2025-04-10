@@ -18,8 +18,7 @@ public class App {
             String dbPass = System.getenv("DB_PASSWORD");
             String dbHost = System.getenv("DB_HOST");
 
-            String jdbcUrl = "jdbc:mysql:///clientes?cloudSqlInstance=" + dbHost +
-                    "&socketFactory=com.google.cloud.sql.mysql.SocketFactory&useSSL=false";
+            String jdbcUrl = "jdbc:mysql://" + dbHost + ":3306/clientes";
 
             try (Connection conn = DriverManager.getConnection(jdbcUrl, dbUser, dbPass);
                  PreparedStatement stmt = conn.prepareStatement("SELECT * FROM clientes");
