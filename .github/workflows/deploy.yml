@@ -26,18 +26,6 @@ jobs:
         docker build -t us-docker.pkg.dev/${{ steps.auth.outputs.project_id }}/gcr-compat/clientes-api ./java-service
         gcloud auth configure-docker us-docker.pkg.dev --quiet
         docker push us-docker.pkg.dev/${{ steps.auth.outputs.project_id }}/gcr-compat/clientes-api
-        
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v2
-  
-    - name: Init Terraform
-      run: terraform -chdir=terraform init
-
-    - name: Read Terraform Outputs
-      id: tf_outputs
-      run: |
-        DB_HOST=$(terraform -chdir=terraform output -raw sql_instance_connection_name)
-        echo "db_host=$DB_HOST" >> $GITHUB_OUTPUT
 
     - name: Deploy to Cloud Run
       run: |
@@ -46,7 +34,7 @@ jobs:
           --platform=managed \
           --region=us-central1 \
           --allow-unauthenticated \
-          --set-env-vars=DB_HOST=${{ steps.tf_outputs.outputs.db_host }},DB_USER=admin,DB_PASSWORD=admin1234
+          --set-env-vars=DB_HOST=${{ steps.tf_outputs.outputs.project_id }}:us-central1:clientes-db,DB_USER=admin,DB_PASSWORD=admin1234
 
     - name: Ejecutar script SQL init.sql
       run: |
