@@ -38,6 +38,12 @@ resource "google_project_iam_member" "can_act_as_itself" {
   member  = "serviceAccount:${google_service_account.github_actions.email}"
 }
 
+resource "google_project_iam_member" "cloudsql_client" {
+  project = var.project_id
+  role    = "roles/cloudsql.client"
+  member  = "serviceAccount:${google_service_account.github_actions.email}"
+}
+
 resource "google_service_account_key" "github_key" {
   service_account_id = google_service_account.github_actions.name
   keepers = {
