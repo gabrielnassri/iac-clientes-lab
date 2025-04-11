@@ -14,7 +14,7 @@ FROM eclipse-temurin:17
 WORKDIR /app
 
 # Copiar el JAR generado
-COPY --from=build /app/target/*.jar app.jar
+COPY --from=build /app/target/clientes-api-1.0-shaded.jar app.jar
 
 # Exponer puerto 8080 (obligatorio para Cloud Run)
 EXPOSE 8080
