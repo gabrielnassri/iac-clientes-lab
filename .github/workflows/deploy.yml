@@ -24,7 +24,7 @@ jobs:
     - name: Build and Push Docker Image to GCR
       run: |
         docker build -t us-docker.pkg.dev/${{ steps.auth.outputs.project_id }}/gcr-compat/clientes-api ./java-service
-        gcloud auth configure-docker --quiet
+        gcloud auth configure-docker us-docker.pkg.dev --quiet
         docker push us-docker.pkg.dev/${{ steps.auth.outputs.project_id }}/gcr-compat/clientes-api
 
     - name: Read Terraform Outputs
