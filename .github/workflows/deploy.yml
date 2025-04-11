@@ -30,11 +30,13 @@ jobs:
     - name: Deploy to Cloud Run
       run: |
         gcloud run deploy clientes-api \
-          --image=us-docker.pkg.dev/${{ steps.auth.outputs.project_id }}/gcr-compat/clientes-api \
-          --platform=managed \
-          --region=us-central1 \
-          --allow-unauthenticated \
-          --set-env-vars=DB_HOST=${{ steps.tf_outputs.outputs.project_id }}:us-central1:clientes-db,DB_USER=admin,DB_PASSWORD=admin1234
+        --image=us-docker.pkg.dev/${{ steps.auth.outputs.project_id }}/gcr-compat/clientes-api \
+        --platform=managed \
+        --region=us-central1 \
+        --allow-unauthenticated \
+        --service-account=github-deployer@${{ steps.auth.outputs.project_id }}.iam.gserviceaccount.com \
+        --set-env-vars=DB_HOST=${{ steps.auth.outputs.project_id }}:us-central1:clientes-db,DB_USER=admin,DB_PASSWORD=admin1234
+
 
     - name: Ejecutar script SQL init.sql
       run: |
