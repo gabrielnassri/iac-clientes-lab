@@ -19,14 +19,12 @@ jobs:
 
     - name: Setup gcloud
       uses: google-github-actions/setup-gcloud@v1
-      with:
-        project_id: pruebaiac-456313
 
     - name: Build and Push Docker Image to GCR
       run: |
-        docker build -t gcr.io/${{ env.GOOGLE_CLOUD_PROJECT }}/clientes-api ./java-service
+        docker build -t gcr.io/${{ steps.auth.outputs.project_id }}/clientes-api ./java-service
         gcloud auth configure-docker --quiet
-        docker push gcr.io/${{ env.GOOGLE_CLOUD_PROJECT }}/clientes-api
+        docker push gcr.io/${{ steps.auth.outputs.project_id }}/clientes-api
 
     - name: Read Terraform Outputs
       id: tf_outputs
