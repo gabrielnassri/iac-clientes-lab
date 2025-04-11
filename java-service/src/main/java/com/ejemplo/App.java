@@ -12,6 +12,9 @@ public class App {
         port(Integer.parseInt(System.getenv().getOrDefault("PORT", "8080")));
 
         get("/clientes", (req, res) -> {
+            res.header("Access-Control-Allow-Origin", "*");
+            res.type("application/json");
+            
             List<Map<String, Object>> clientes = new ArrayList<>();
 
             String dbUser = System.getenv("DB_USER");
