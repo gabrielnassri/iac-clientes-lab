@@ -1,58 +1,37 @@
-resource "google_artifact_registry_repository" "gcr_compat" {
-  location      = var.region
-  repository_id = "gcr-compat"
-  format        = "DOCKER"
-  description   = "Repositorio Docker compatible con gcr.io para clientes-api"
+resource "google_sql_database_instance" "default" {
+  name             = "clientes-db"
+  database_version = "MYSQL_8_0"
+  region           = var.region
+  project          = var.project_id
 
-  docker_config {
-    immutable_tags = false
+  settings {
+    tier              = "db-f1-micro"
+    disk_type         = "PD_SSD"
+    disk_size         = 5
+    activation_policy = "ALWAYS"
+    availability_type = "ZONAL"
+    disk_autoresize   = false
+
+    ip_configuration {
+      ipv4_enabled    = false
+      private_network = google_compute_network.vpc_network.self_link
+    }
   }
+
+  deletion_protection = false
+
+  depends_on = [
+    google_service_networking_connection.private_vpc_connection
+  ]
 }
 
-resource "google_cloud_run_service" "java_api" {
-  name     = "clientes-api"
-  location = var.region
-  project  = var.project_id
+resource "google_sql_database" "database" {
+  name     = "clientes"
+  instance = google_sql_database_instance.default.name
+}
 
-  depends_on = [google_artifact_registry_repository.gcr_compat]
-  
-  template {
-    metadata {
-      annotations = {
-        "run.googleapis.com/vpc-access-connector"        = google_vpc_access_connector.vpc_connector.id
-        "run.googleapis.com/vpc-access-egress"           = "all-traffic"
-        "autoscaling.knative.dev/maxScale"               = "100"
-      }
-    }
-
-    spec {
-      containers {
-        image = "gcr.io/cloudrun/hello"
-
-        env {
-          name  = "DB_HOST"
-          value = google_sql_database_instance.default.connection_name
-        }
-
-        env {
-          name  = "DB_USER"
-          value = var.db_user
-        }
-
-        env {
-          name  = "DB_PASSWORD"
-          value = var.db_password
-        }
-
-        ports {
-          container_port = 8080
-        }
-      }
-    }
-  }
-
-  traffic {
-    percent         = 100
-    latest_revision = true
-  }
+resource "google_sql_user" "users" {
+  name     = var.db_user
+  instance = google_sql_database_instance.default.name
+  password = var.db_password
 }
