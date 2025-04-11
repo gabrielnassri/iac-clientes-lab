@@ -29,6 +29,9 @@ jobs:
         
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
+  
+    - name: Init Terraform
+      run: terraform -chdir=terraform init
 
     - name: Read Terraform Outputs
       id: tf_outputs
