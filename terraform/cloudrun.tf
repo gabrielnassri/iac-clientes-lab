@@ -1,8 +1,21 @@
+resource "google_artifact_registry_repository" "gcr_compat" {
+  location      = var.region
+  repository_id = "gcr-compat"
+  format        = "DOCKER"
+  description   = "Repositorio Docker compatible con gcr.io para clientes-api"
+
+  docker_config {
+    immutable_tags = false
+  }
+}
+
 resource "google_cloud_run_service" "java_api" {
   name     = "clientes-api"
   location = var.region
   project  = var.project_id
 
+  depends_on = [google_artifact_registry_repository.gcr_compat]
+  
   template {
     metadata {
       annotations = {
