@@ -40,5 +40,7 @@ public class App {
             res.type("application/json");
             return new Gson().toJson(clientes);
         });
+
+        awaitInitialization();
     }
 }
