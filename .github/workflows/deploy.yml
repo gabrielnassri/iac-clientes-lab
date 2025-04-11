@@ -37,11 +37,6 @@ jobs:
         --service-account=github-deployer@${{ steps.auth.outputs.project_id }}.iam.gserviceaccount.com \
         --set-env-vars=DB_HOST=${{ steps.auth.outputs.project_id }}:us-central1:clientes-db,DB_USER=admin,DB_PASSWORD=admin1234
 
-
-    - name: Ejecutar script SQL init.sql
-      run: |
-        gcloud sql connect clientes-db --user=admin --quiet < sql/init.sql
-
     - name: Copiar index.html a la VM
       run: |
         echo "$SSH_PRIVATE_KEY" > key.pem
