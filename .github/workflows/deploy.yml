@@ -26,6 +26,12 @@ jobs:
         docker build -t us-docker.pkg.dev/${{ steps.auth.outputs.project_id }}/gcr-compat/clientes-api ./java-service
         gcloud auth configure-docker us-docker.pkg.dev --quiet
         docker push us-docker.pkg.dev/${{ steps.auth.outputs.project_id }}/gcr-compat/clientes-api
+        
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+  
+    - name: Init Terraform (opcional)
+      run: terraform -chdir=terraform init
 
     - name: Read Terraform Outputs
       id: tf_outputs
