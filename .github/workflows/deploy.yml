@@ -23,9 +23,9 @@ jobs:
 
     - name: Build and Push Docker Image to GCR
       run: |
-        docker build -t gcr.io/${{ steps.auth.outputs.project_id }}/clientes-api ./java-service
+        docker build -t us-docker.pkg.dev/${{ steps.auth.outputs.project_id }}/clientes-api ./java-service
         gcloud auth configure-docker --quiet
-        docker push gcr.io/${{ steps.auth.outputs.project_id }}/clientes-api
+        docker push us-docker.pkg.dev/${{ steps.auth.outputs.project_id }}/clientes-api
 
     - name: Read Terraform Outputs
       id: tf_outputs
@@ -36,7 +36,7 @@ jobs:
     - name: Deploy to Cloud Run
       run: |
         gcloud run deploy clientes-api \
-          --image=gcr.io/${{ steps.auth.outputs.project_id }}/clientes-api
+          --image=us-docker.pkg.dev/${{ steps.auth.outputs.project_id }}/clientes-api
           --platform=managed \
           --region=us-central1 \
           --allow-unauthenticated \
