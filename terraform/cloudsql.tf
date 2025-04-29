@@ -7,7 +7,7 @@ resource "google_sql_database_instance" "default" {
   settings {
     tier              = "db-f1-micro"
     disk_type         = "PD_SSD"
-    disk_size         = 5
+    disk_size         = 10
     activation_policy = "ALWAYS"
     availability_type = "ZONAL"
     disk_autoresize   = false
