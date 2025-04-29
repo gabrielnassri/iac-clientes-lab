@@ -29,7 +29,7 @@ resource "google_project_iam_member" "run_invoker" {
 
 resource "google_project_iam_member" "artifact_registry_writer" {
   role   = "roles/artifactregistry.writer"
-  member = "serviceAccount:${google_service_account.github_deployer.email}"
+  member = "serviceAccount:${google_service_account.github_actions.email}"
 }
 
 resource "google_project_iam_member" "can_act_as_itself" {
