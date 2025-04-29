@@ -27,6 +27,12 @@ resource "google_project_iam_member" "run_invoker" {
   member = "serviceAccount:${google_service_account.github_actions.email}"
 }
 
+resource "google_project_iam_member" "artifact_registry_admin" {
+  project = var.project_id
+  role   = "roles/artifactregistry.admin"
+  member = "serviceAccount:${google_service_account.github_actions.email}"
+}
+
 resource "google_project_iam_member" "artifact_registry_writer" {
   project = var.project_id
   role   = "roles/artifactregistry.writer"
