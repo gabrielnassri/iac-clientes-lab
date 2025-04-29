@@ -21,16 +21,16 @@ jobs:
     - name: Setup gcloud
       uses: google-github-actions/setup-gcloud@v1
 
-    - name: Build and Push Docker Image to GCR
+    - name: Build and Push Docker Image to Artifact Registry
       run: |
-        docker build -t us-docker.pkg.dev/${{ steps.auth.outputs.project_id }}/gcr-compat/clientes-api ./java-service
-        gcloud auth configure-docker us-docker.pkg.dev --quiet
-        docker push us-docker.pkg.dev/${{ steps.auth.outputs.project_id }}/gcr-compat/clientes-api
+        docker build -t us-central1-docker.pkg.dev/${{ steps.auth.outputs.project_id }}/gcr-compat/clientes-api ./java-service
+        gcloud auth configure-docker us-central1-docker.pkg.dev --quiet
+        docker push us-central1-docker.pkg.dev/${{ steps.auth.outputs.project_id }}/gcr-compat/clientes-api
 
     - name: Deploy to Cloud Run
       run: |
         gcloud run deploy clientes-api \
-        --image=us-docker.pkg.dev/${{ steps.auth.outputs.project_id }}/gcr-compat/clientes-api \
+        --image=us-central1-docker.pkg.dev/${{ steps.auth.outputs.project_id }}/gcr-compat/clientes-api \
         --platform=managed \
         --region=us-central1 \
         --allow-unauthenticated \
@@ -41,7 +41,7 @@ jobs:
       run: |
         echo "$SSH_PRIVATE_KEY" > key.pem
         chmod 600 key.pem
-        scp -o StrictHostKeyChecking=no -i key.pem web/index.html debian@<IP_VM>:/tmp/index.html
-        ssh -o StrictHostKeyChecking=no -i key.pem debian@<IP_VM> "sudo mv /tmp/index.html /var/www/html/index.html"
+        scp -o StrictHostKeyChecking=no -i key.pem web/index.html debian@<IP_EXTERNA_VM>:/tmp/index.html
+        ssh -o StrictHostKeyChecking=no -i key.pem debian@<IP_EXTERNA_VM> "sudo mv /tmp/index.html /var/www/html/index.html"
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
